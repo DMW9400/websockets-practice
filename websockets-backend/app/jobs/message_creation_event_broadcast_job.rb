@@ -1,6 +1,6 @@
 class MessageCreationEventBroadcastJob < ApplicationJob
 
-  queue as :default
+  queue_as :default
 
   def perform(message)
     ActionCable.server.broadcast(

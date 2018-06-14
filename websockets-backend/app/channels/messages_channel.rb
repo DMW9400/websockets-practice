@@ -8,7 +8,7 @@ class MessagesChannel < ApplicationCable::Channel
 
   end
 
-  def create
+  def create(opts)
     Message.create(
       content: opts.fetch('content'),
       user_id: opts.fetch('user_id'),
