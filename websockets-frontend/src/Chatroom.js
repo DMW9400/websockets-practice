@@ -1,11 +1,11 @@
 import React from 'react'
-import Cable from 'action-cable-react'
+import Cable from 'actioncable'
 
-class Chatroom extends React.Component {
+export default class Chatroom extends React.Component {
   state = {
-    message_body = '',
-    submitted = false,
-    roomsMessages = []
+    input: '',
+    submitted: false,
+    roomsMessages:  []
   }
 
   handleChange = (event) => {
@@ -14,23 +14,25 @@ class Chatroom extends React.Component {
     }, ()=>console.log(this.state))
   }
 
-  handleSubmit = (event) => {
+  handleSendEvent = (event) => {
     event.preventDefault()
-    this.setState(
-      submitted: true
+    this.chats.create(this.state.input)
+    this.setState({
+            input: ''
     })
   }
 
   createSocket = () => {
     let cable = Cable.createConsumer('ws://localhost:3000/cable')
     this.chats = cable.subscriptions.create({
-      channel: 'MessagesChannel',{}
+      channel: 'MessagesChannel',
     }, {
       connected: () => {},
       received: (data)  => {
         let roomsMessages = this.state.roomsMessages
         roomsMessages.push(data)
         this.setState({roomsMessages: roomsMessages})
+        console.log(data)
       },
 
       create: function(chatContent){
@@ -38,19 +40,25 @@ class Chatroom extends React.Component {
           content: chatContent,
           user_id: localStorage.getItem('user_id'),
           chatroom_id: localStorage.getItem('chatroom_id')
-        })
+        });
       }
-    })
+    });
   }
 
+  componentWillMount = () => {
+    this.createSocket()
+  }
   render(){
     return(
       <div>
-        <form onSubmit={this.handleSubmit}> </form>
-        <TextField
-          name='message_body'
-          onChange = {this.handleChange}
-        />
+        <form onSubmit={this.handleSendEvent}>
+          <input
+            name='message_body'
+            onChange = {this.handleChange}
+          />
+          <button type='submit' />
+        </form>
+
       </div>
     )
   }

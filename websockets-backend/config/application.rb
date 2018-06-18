@@ -17,7 +17,7 @@ Bundler.require(*Rails.groups)
     end
 
   end
-  
+
 module ProjectBackend
   class Application < Rails::Application
     config.load_defaults 5.1
